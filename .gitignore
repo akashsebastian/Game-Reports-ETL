@@ -1,7 +1,6 @@
 env
 .ipynb*
 .vscode
-event.json
-config.yaml
+config.json
 *.ipynb
 __pycache__
