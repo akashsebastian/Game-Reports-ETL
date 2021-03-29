@@ -1,0 +1,7 @@
+env
+.ipynb*
+.vscode
+event.json
+config.yaml
+*.ipynb
+__pycache__
