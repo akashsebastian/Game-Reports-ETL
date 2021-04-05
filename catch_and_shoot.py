@@ -150,7 +150,6 @@ class TeamTotalCatchAndShoot(CatchAndShoot):
         data = []
         headers_list = [header.lower() for header in raw_data['resultSets'][0]['headers']]
         self.headers_list = headers_list
-        print(len(self.headers_list))
         for row in raw_data['resultSets'][0]['rowSet']:
             data.append(row)
         return data

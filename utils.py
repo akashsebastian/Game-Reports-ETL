@@ -15,8 +15,11 @@ def connect_to_db():
             port='5432'
         )
         return conn
-    except e:
+    except Exception as e:
         print(f"Couldn't connect to db. Error: {e}")
 
 def divide(a, b):
     return a/b if b else 0
+
+def get_dates():
+    return date.today(), date.today() - timedelta(days=1)

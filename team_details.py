@@ -1,13 +1,31 @@
 import requests
 import json
 from nba_connectors import AbstractNBAConnect
-from utils import upload_rows
+from players import Players
+from utils import connect_to_db
 
 
 class TeamDetails(AbstractNBAConnect):
 
     season = '2020-21'
     season_type = 'Regular Season'
+
+    def upload_to_db(self, rows):
+        try:
+            conn = connect_to_db()
+            with conn.cursor() as cur:
+                args = [cur.mogrify("(%s, %s, %s, %s, %s, %s)", x).decode('utf-8') for x in rows]
+                args_str = ', '.join(args)
+                cur.execute(
+                    "INSERT INTO teams values " +
+                    args_str +
+                    "ON CONFLICT (team_id) DO UPDATE SET (team_id, city, name, slug, conference, division) = (EXCLUDED.team_id, EXCLUDED.city, EXCLUDED.name, EXCLUDED.slug, EXCLUDED.conference, EXCLUDED.division)"
+                )
+                conn.commit()
+            return rows
+        except Exception as e:
+            print(f"Error uploading to DB. Error: {e}")
+            return []
 
     def get_data(self):
         params = (
@@ -28,11 +46,13 @@ class TeamDetails(AbstractNBAConnect):
             obj.append(row[6])
             obj.append(row[10])
             data.append(tuple(obj))
+            Players(obj[0]).poll()
         return data
 
-    # def upload_data(self, parsed_data):
-    #     rows = upload_rows('teams', parsed_data)
-    #     return rows
+    def poll(self):
+        raw_data = self.get_data()
+        parsed_data = self.parse_data(raw_data)
+        data = self.upload_data(parsed_data)
 
 
 if __name__ == '__main__':

@@ -39,7 +39,6 @@ class AbstractNBAConnect():
         raw_data = self.get_data()
         parsed_data = self.parse_data(raw_data)
         data = self.upload_data(parsed_data)
-        print(data)
         return self.to_dataframe(data)
 
     def to_dataframe(self, data):

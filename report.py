@@ -3,6 +3,7 @@ from catch_and_shoot import TeamDailyCatchAndShoot, TeamTotalCatchAndShoot, Play
 from drives import TeamDailyDrives, TeamTotalDrives, PlayerDailyDrives, PlayerTotalDrives
 from pull_up_shooting import TeamDailyPullUpShooting, TeamTotalPullUpShooting, PlayerDailyPullUpShooting, PlayerTotalPullUpShooting
 from shots_closest_defender import TeamDailyShotsClosestDefender, TeamTotalShotsClosestDefender, PlayerDailyShotsClosestDefender, PlayerTotalShotsClosestDefender
+from video_status import VideoStatus
 from utils import divide, connect_to_db
 
 
@@ -216,11 +217,15 @@ class Report():
 
     # Function to generate player and team report
     def generate_reports(self, date):
-        self.generate_team_reports(date)
-        self.generate_player_reports(date)
+        games = VideoStatus(date).poll()
+        if games:
+            self.generate_team_reports(date)
+            self.generate_player_reports(date)
+        else:
+            print(f"No games on date {date}")
 
 if __name__ == '__main__':
-    Report().generate_reports("01/20/2021")
-    # Report().generate_team_reports("01/21/2021")
+    # Report().generate_reports("01/20/2021")
+    # Report().generate_reports("01/21/2021")
     # Report().generate_reports("01/22/2021")
-    # Report().generate_player_reports("01/20/2021")
+    Report().generate_reports("12/24/2020")

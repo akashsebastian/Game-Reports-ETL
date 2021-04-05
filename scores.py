@@ -2,7 +2,7 @@ import requests
 import json
 import datetime
 from nba_connectors import AbstractNBAConnect
-from utils import connect_to_db
+from utils import connect_to_db, get_dates
 
 
 class Scores(AbstractNBAConnect):
@@ -10,6 +10,7 @@ class Scores(AbstractNBAConnect):
     def __init__(self, game_date):
         # self.game_date = datetime.datetime.strptime(game_date, '%m/%d/%Y').strftime('%Y-%m-%d')
         self.game_date = game_date.strftime('%Y-%m-%d')
+        # self.game_date
 
     def upload_to_db(self, rows):
         try:
@@ -33,9 +34,10 @@ class Scores(AbstractNBAConnect):
             ('GameDate', self.game_date),
         )
         return json.loads(requests.get('https://stats.nba.com/stats/scoreboardv3', headers=self.headers, params=params).content)
-    
+
     def parse_data(self, raw_data):
         data = []
+        print(raw_data)
         date = raw_data['scoreboard']['gameDate']
         for game in raw_data['scoreboard']['games']:
             obj = [
@@ -59,5 +61,17 @@ class Scores(AbstractNBAConnect):
         rows = self.upload_to_db(parsed_data)
         return parsed_data
 
+    def poll(self):
+        raw_data = self.get_data()
+        parsed_data = self.parse_data(raw_data)
+        data = self.upload_data(parsed_data)
+
 if __name__ == '__main__':
-    print(Scores('02/7/2021').poll())
+    # print(Scores('04/2/2021').poll())
+    start_date = datetime.date(2020, 12, 22)
+    # start_date = datetime.date(2021, 4, 2)
+    end_date, _ = get_dates()
+    while start_date <= end_date:
+        Scores(start_date).poll()
+        start_date = start_date + datetime.timedelta(days=1)
+
