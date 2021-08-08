@@ -7,10 +7,11 @@ from utils import connect_to_db
 # Base class to handle connecting to the NBA API and getting the pull up shooting data
 class PullUpShooting(AbstractNBAConnect):
 
-    def __init__(self, date_from='', date_to=''):
+    def __init__(self, date_from='', date_to='', season_type='Regular Season'):
         # mm/dd/yyyy
         self.date_from = date_from
         self.date_to = date_to
+        self.season_type = season_type
 
     def get_params(self):
         return (
@@ -40,7 +41,7 @@ class PullUpShooting(AbstractNBAConnect):
             ('PtMeasureType', 'PullUpShot'),
             ('Season', '2020-21'),
             ('SeasonSegment', ''),
-            ('SeasonType', 'Regular Season'),
+            ('SeasonType', self.season_type),
             ('StarterBench', ''),
             ('TeamID', '0'),
             ('VsConference', ''),
@@ -88,8 +89,8 @@ class PlayerTotalPullUpShooting(PullUpShooting):
 # Class to handle getting the pull up shooting data for players on a given day
 class PlayerDailyPullUpShooting(PullUpShooting):
 
-    def __init__(self, date_from, date_to):
-        super().__init__(date_from, date_to)
+    def __init__(self, date_from, date_to, season_type):
+        super().__init__(date_from, date_to, season_type)
         self.playerorteam = 'Player'
         self.headers_list = []
         self.table_name = 'player_daily_pull_up'
@@ -158,8 +159,8 @@ class TeamTotalPullUpShooting(PullUpShooting):
 # Class to handle getting the pull up shooting data for teams on a given day
 class TeamDailyPullUpShooting(PullUpShooting):
 
-    def __init__(self, date_from, date_to):
-        super().__init__(date_from, date_to)
+    def __init__(self, date_from, date_to, season_type):
+        super().__init__(date_from, date_to, season_type)
         self.playerorteam = 'Team'
         self.table_name = 'team_daily_pull_up_shooting'
 

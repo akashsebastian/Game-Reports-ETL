@@ -7,10 +7,11 @@ from utils import connect_to_db
 # Base class to handle connecting to the NBA API and getting the catch and shoot data
 class CatchAndShoot(AbstractNBAConnect):
 
-    def __init__(self, date_from='', date_to=''):
+    def __init__(self, date_from='', date_to='', season_type='Regular Season'):
         # mm/dd/yyyy
         self.date_from = date_from
         self.date_to = date_to
+        self.season_type = season_type
 
     def get_params(self):
         return (
@@ -40,7 +41,7 @@ class CatchAndShoot(AbstractNBAConnect):
             ('PtMeasureType', 'CatchShoot'),
             ('Season', '2020-21'),
             ('SeasonSegment', ''),
-            ('SeasonType', 'Regular Season'),
+            ('SeasonType', self.season_type),
             ('StarterBench', ''),
             ('TeamID', '0'),
             ('VsConference', ''),
@@ -88,8 +89,8 @@ class PlayerTotalCatchAndShoot(CatchAndShoot):
 # Class to handle getting the catch and shoot data for players on a given day
 class PlayerDailyCatchAndShoot(CatchAndShoot):
 
-    def __init__(self, date_from = '', date_to = ''):
-        super().__init__(date_from, date_to)
+    def __init__(self, date_from, date_to, season_type):
+        super().__init__(date_from, date_to, season_type)
         self.playerorteam = 'Player'
         self.table_name = 'player_daily_catch_and_shoot'
         self.headers_list = []
@@ -157,8 +158,8 @@ class TeamTotalCatchAndShoot(CatchAndShoot):
 # Class to handle getting the catch and shoot data for teams on a given day
 class TeamDailyCatchAndShoot(CatchAndShoot):
 
-    def __init__(self, date_from, date_to):
-        super().__init__(date_from, date_to )
+    def __init__(self, date_from, date_to, season_type):
+        super().__init__(date_from, date_to, season_type)
         self.playerorteam = 'Team'
         self.table_name = 'team_daily_catch_and_shoot'
 

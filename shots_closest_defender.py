@@ -8,10 +8,11 @@ from utils import connect_to_db
 # Base class to handle connecting to the NBA API and getting the shots defender data
 class ShotsClosestDefender(AbstractNBAConnect):
 
-    def __init__(self, date_from='', date_to=''):
+    def __init__(self, date_from='', date_to='', season_type='Regular Season'):
         # mm/dd/yyyy
         self.date_from = date_from
         self.date_to = date_to
+        self.season_type = season_type
 
     def_range_map = {
         0: '0-2 Feet - Very Tight',
@@ -52,7 +53,7 @@ class ShotsClosestDefender(AbstractNBAConnect):
             ('Rank', 'N'),
             ('Season', '2020-21'),
             ('SeasonSegment', ''),
-            ('SeasonType', 'Regular Season'),
+            ('SeasonType', self.season_type),
             ('ShotClockRange', ''),
             ('ShotDistRange', ''),
             ('StarterBench', ''),
@@ -109,8 +110,8 @@ class PlayerTotalShotsClosestDefender(ShotsClosestDefender):
 # Class to handle getting the shots defender data for players on a given day
 class PlayerDailyShotsClosestDefender(ShotsClosestDefender):
 
-    def __init__(self, date_from, date_to):
-        super().__init__(date_from, date_to)
+    def __init__(self, date_from, date_to, season_type):
+        super().__init__(date_from, date_to, season_type)
         self.playerorteam = 'player'
         self.headers_list = []
         self.table_name = 'player_daily_shots_closest_defender'
@@ -183,8 +184,8 @@ class TeamTotalShotsClosestDefender(ShotsClosestDefender):
 # Class to handle getting the shots defender data for teams on a given day
 class TeamDailyShotsClosestDefender(ShotsClosestDefender):
 
-    def __init__(self, date_from, date_to):
-        super().__init__(date_from, date_to)
+    def __init__(self, date_from, date_to, season_type):
+        super().__init__(date_from, date_to, season_type)
         self.playerorteam = 'team'
         self.table_name = 'team_daily_shots_closest_defender'
 
